@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import SignupForm , ActivationForm
+from django.contrib.auth import login, authenticate, logout
+from .forms import SignupForm , ActivationForm, LoginForm
 from .models import Profile
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.contrib import messages
 # Create your views here.
 def home(request):
     return render(request,'home.html')
@@ -47,3 +49,27 @@ def activate(request, username):
     else:
         form=ActivationForm()
     return render(request,'activate.html',{'form':form} )
+
+
+
+def signin(request):
+    if request.method == 'POST':
+        print('POST')
+        form=LoginForm(request.POST)
+        if form.is_valid():
+            print('VALID')
+            username = request.POST.get('username')
+            password= request.POST.get('password')
+            user=authenticate(request,username=username, password=password)
+            
+            if user is not None:
+                print('Loggedin successfully')
+                login(request, user)
+                return redirect('/')
+            else:
+                messages.error(request,f'Invalid username or password')
+                print('Login failed')
+    else:
+        print('Login failed')
+        form=LoginForm()
+    return render(request,'signin.html',{'form':form})
