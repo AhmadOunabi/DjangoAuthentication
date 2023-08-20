@@ -73,3 +73,8 @@ def signin(request):
         print('Login failed')
         form=LoginForm()
     return render(request,'signin.html',{'form':form})
+
+
+def profile(request):
+    
+    return render(request,'profile.html')
